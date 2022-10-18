@@ -9,14 +9,24 @@ defmodule PhoenixRestFramework.ResourceController do
 
       plug(:put_new_view, Keyword.get(opts, :view, PhoenixRestFramework.ResourceView))
 
+      def serialize(conn, data) do
+        vm = view_module(conn)
+        Phoenix.View.render(vm, "generic.json", data: data, fields: @fields)
+      end
+
+      defp render_serialized(conn, data) do
+        seralized_data = serialize(conn, data)
+        json(conn, seralized_data)
+      end
+
       def index(conn, _params) do
-        render(conn, :index, records: @resource.list(), fields: @fields)
+        render_serialized(conn, @resource.list())
       end
 
       def show(conn, %{"id" => id}) do
         case @resource.get(id) do
           nil -> {:error, :not_found}
-          record -> render(conn, :show, record: record, fields: @fields)
+          record -> render_serialized(conn, record)
         end
       end
 
@@ -24,14 +34,14 @@ defmodule PhoenixRestFramework.ResourceController do
         with {:ok, record} <- @resource.create(params) do
           conn
           |> put_status(:created)
-          |> render(:show, record: record)
+          |> render_serialized(record)
         end
       end
 
       def update(conn, %{"id" => id} = params) do
         with %{} = record <- @resource.get(id),
              {:ok, updated_record} <- @resource.update(record, params) do
-          render(conn, :show, record: updated_record, fields: @fields)
+          render_serialized(conn, updated_record)
         end
       end
 
@@ -39,7 +49,7 @@ defmodule PhoenixRestFramework.ResourceController do
         json(conn, %{error: "not implemented"})
       end
 
-      defoverridable index: 2, show: 2, create: 2, update: 2, delete: 2
+      defoverridable serialize: 2, index: 2, show: 2, create: 2, update: 2, delete: 2
     end
   end
 end
