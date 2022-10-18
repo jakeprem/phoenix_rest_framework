@@ -36,7 +36,8 @@ defmodule PhoenixRestFramework.MixProject do
   defp deps do
     [
       {:ex_doc, ">= 0.0.0", only: :dev},
-      {:plug, "~> 1.13"}
+      {:plug, "~> 1.13"},
+      {:phoenix, "~> 1.6"}
     ]
   end
 end

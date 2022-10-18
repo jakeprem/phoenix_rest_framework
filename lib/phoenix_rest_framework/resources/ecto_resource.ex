@@ -1,13 +1,10 @@
 defmodule PhoenixRestFramework.EctoResource do
   defmacro __using__(opts) do
-    repo = Keyword.fetch!(opts, :repo)
-    schema = Keyword.fetch!(opts, :schema)
-
-    quote do
+    quote bind_quoted: [opts: opts], location: :keep do
       @behaviour PhoenixRestFramework.Resource
 
-      @repo unquote(repo)
-      @schema unquote(schema)
+      @repo Keyword.fetch!(opts, :repo)
+      @schema Keyword.fetch!(opts, :schema)
 
       def list do
         query()

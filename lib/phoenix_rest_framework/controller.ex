@@ -9,5 +9,5 @@ defmodule PhoenixRestFramework.Controller do
   @callback update(conn, params) :: Plug.Conn.t()
   @callback delete(conn, params) :: Plug.Conn.t()
 
-  @callback serialize(conn, record) :: map()
+  # @callback serialize(conn, record) :: map()
 end
